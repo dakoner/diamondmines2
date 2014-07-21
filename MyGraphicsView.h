@@ -16,23 +16,23 @@ public:
     MyGraphicsView(QGraphicsPolygonItem*pi): QGraphicsView(), _pi(pi) {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
+        centerOn(_pi);
     }
      ~MyGraphicsView() { }
 
     void moveLeft(void) {
         // ensure not off left edge
         QPointF p = _pi->pos();
-        p.setX(p.x() - 0.1);
+        p.setX(p.x() - 1);
         _pi->setPos(p);
-        horizontalScrollBar()->setValue(horizontalScrollBar()->value()-10);
+        centerOn(_pi);
     }
     void moveRight(void) {
         // ensure not off right edge
         QPointF p = _pi->pos();
-        p.setX(p.x() + 0.1);
+        p.setX(p.x() + 1);
         _pi->setPos(p);
-        horizontalScrollBar()->setValue(horizontalScrollBar()->value()+10);
+        centerOn(_pi);
     }
 
     void moveUp(void) {
