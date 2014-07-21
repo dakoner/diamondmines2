@@ -1,0 +1,4 @@
+#ifndef MOTIONFILTER_H
+#define MOTIONFILTER_H
+
+#endif // MOTIONFILTER_H
