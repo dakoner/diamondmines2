@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = untitled10
+TARGET = diamondmines210
 TEMPLATE = app
 QMAKE_CXXFLAGS += -std=c++11
 
@@ -16,6 +16,6 @@ QMAKE_CXXFLAGS += -std=c++11
 SOURCES += main.cpp
 
 HEADERS  += \
-    MyGraphicsView.h
+    MotionFilter.h
 
 FORMS    +=
