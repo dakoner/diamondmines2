@@ -7,8 +7,8 @@
 #include <set>
 
 #include "MotionFilter.h"
-std::vector<int> stalagtites{0,0,0,0,1,1,2,2,1,1,1,3,1,0,0,1,4,0,0,1};
-std::vector<int> stalagmites{0,0,0,0,2,2,2,2,2,3,3,4,4,3,0,0,0,0,0,1};
+std::vector<int> stalagtites{0,0,0,0,1,1,2,2,1,1,1,3,1,0,0,1,4,0,0,1,0,0,0,0,2,2,2,2,2,3,3,4,4,3,0,0,0,0,0,1};
+std::vector<int> stalagmites{0,0,0,0,2,2,2,2,2,3,3,4,4,3,0,0,0,0,0,1,0,0,0,0,1,1,2,2,1,1,1,3,1,0,0,1,4,0,0,1};
 
 
 int main(int argc, char** argv) {
@@ -36,14 +36,14 @@ int main(int argc, char** argv) {
         QPolygonF polygon;
         polygon << QPointF(0,3) << QPointF(1,2) << QPointF(2,2.75)<< QPointF(3,1.5) << QPointF(2,.25) << QPointF(1, 1) << QPointF(0, 0) ;
         QGraphicsPolygonItem* pi = scene->addPolygon(polygon, p);
-        pi->setScale(72);
+        pi->setScale(8);
         pi->setPos(720,360);
 
         QGraphicsView view;
         view.resize(1280,720);
         view.show();
         view.setScene(scene);
-        view.horizontalScrollBar()->setRange(0,1280);
+        //view.horizontalScrollBar()->setRange(0,1280);
         view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         view.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 

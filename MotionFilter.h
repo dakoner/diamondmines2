@@ -7,6 +7,7 @@
 #include <QEvent>
 #include <QGraphicsView>
 #include <QKeyEvent>
+#include <QScrollBar>
 #include <set>
 
 class MotionFilter : public QObject
@@ -42,9 +43,18 @@ public:
          }
      }
 
+     void log() {
+         QPointF p = _pi->pos();
+         std::cout << _view->horizontalScrollBar()->minimum() << " " << _view->horizontalScrollBar()->value() << " " << _view->horizontalScrollBar()->maximum() << std::endl;
+         std::cout << _view->viewport()->width() << " " << _view->viewport()->height() << std::endl;
+         std::cout << p.x() << " " << p.y() << std::endl;
+         QPointF p2 = _view->mapFromScene(p);
+         std::cout << p2.x() << " " << p2.y() << std::endl;
+
+     }
+
      void collide() {
         QList<QGraphicsItem* > ci = _view->scene()->collidingItems(_pi);
-        std::cout << ci.size() << std::endl;
         for(int i = 0; i < ci.size(); ++i) {
             if (_stalagtites_set.find(ci[i]) != _stalagtites_set.end()) {
                 std::cout << "Hit a stalagtite." << std::endl;
@@ -53,7 +63,7 @@ public:
                 std::cout << "Hit a stalagmite." << std::endl;
             }
         }
-        std::cout << std::endl;
+
     }
 
 private:
@@ -61,17 +71,29 @@ private:
      void moveLeft(void) {
          // ensure not off left edge
          QPointF p = _pi->pos();
-         p.setX(p.x() - 1);
-         _pi->setPos(p);
-         //_view->centerOn(_pi->x(), _view->height()/2);
+         QPointF p2 = _view->mapFromScene(p);
+         if (p2.x() > 0) {
+            p.setX(p.x() - 10);
+            _pi->setPos(p);
+            _view->centerOn(_pi->x(), _view->height()/2);
+         } else {
+             std::cout << "at left edge" << std::endl;
+         }
+         log();
          collide();
      }
      void moveRight(void) {
          // ensure not off right edge
          QPointF p = _pi->pos();
-         p.setX(p.x() + 1);
-         _pi->setPos(p);
-         //_view->centerOn(_pi->x(), _view->height()/2);
+         QPointF p2 = _view->mapFromScene(p);
+         if (p2.x() < _view->viewport()->width() - 20) {
+             p.setX(p.x() + 10);
+            _pi->setPos(p);
+            _view->centerOn(_pi->x(), _view->height()/2);
+         } else {
+             std::cout << "at right edge" << std::endl;
+         }
+         log();
          collide();
      }
 
@@ -79,15 +101,16 @@ private:
          QPointF p = _pi->pos();
          p.setY(p.y() - 0.5);
          _pi->setPos(p);
-         //_view->centerOn(_pi->x(), _view->height()/2);
-
+         _view->centerOn(_pi->x(), _view->height()/2);
+         log();
          collide();
      }
      void moveDown(void) {
          QPointF p = _pi->pos();
          p.setY(p.y() + 0.5);
          _pi->setPos(p);
-         //_view->centerOn(_pi->x(), _view->height()/2);
+         _view->centerOn(_pi->x(), _view->height()/2);
+         log();
          collide();
      }
 
