@@ -13,9 +13,14 @@ TEMPLATE = app
 QMAKE_CXXFLAGS += -std=c++11
 
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    box2dengine.cpp
 
 HEADERS  += \
-    MotionFilter.h
+    MotionFilter.h \
+    box2dengine.h
 
 FORMS    +=
+
+LIBS +=  -lBox2D
+
