@@ -19,11 +19,22 @@ int main(int argc, char** argv) {
         QPen p;
         p.setWidth(0);
 
+
         std::set<QGraphicsItem *> stalagtites_set;
         for (unsigned int i = 0; i < stalagtites.size()-1; ++i) {
            QGraphicsItem* item = scene->addLine(QLineF(i,stalagtites[i],(i+1.),stalagtites[i+1]), p);
            item->setScale(72);
            stalagtites_set.insert(item);
+        }
+        {
+            QGraphicsItem* item = scene->addLine(QLineF(stalagtites.size()-1, stalagtites[stalagtites.size()-1], stalagtites.size(), 0), p);
+            item->setScale(72);
+            stalagtites_set.insert(item);
+        }
+        {
+            QGraphicsItem* item = scene->addLine(QLineF(0,0,0,10), p);
+            item->setScale(72);
+            stalagtites_set.insert(item);
         }
 
         std::set<QGraphicsItem *> stalagmites_set;
@@ -32,6 +43,18 @@ int main(int argc, char** argv) {
             item->setScale(72);
             stalagmites_set.insert(item);
         }
+        {
+            QGraphicsItem* item = scene->addLine(QLineF(stalagmites.size()-1, 10-stalagmites[stalagmites.size()-1], stalagmites.size(), 10), p);
+            item->setScale(72);
+            stalagmites_set.insert(item);
+        }
+        {
+            QGraphicsItem* item = scene->addLine(QLineF(stalagmites.size(),0,stalagmites.size(),10), p);
+            item->setScale(72);
+            stalagmites_set.insert(item);
+        }
+
+
 
         QPolygonF polygon;
         polygon << QPointF(0,3) << QPointF(1,2) << QPointF(2,2.75)<< QPointF(3,1.5) << QPointF(2,.25) << QPointF(1, 1) << QPointF(0, 0) ;
@@ -43,7 +66,6 @@ int main(int argc, char** argv) {
         view.resize(1280,720);
         view.show();
         view.setScene(scene);
-        //view.horizontalScrollBar()->setRange(0,1280);
         view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         view.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 

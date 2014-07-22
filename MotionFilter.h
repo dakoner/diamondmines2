@@ -53,7 +53,7 @@ public:
 
      }
 
-     void collide() {
+     int collide() {
         QList<QGraphicsItem* > ci = _view->scene()->collidingItems(_pi);
         for(int i = 0; i < ci.size(); ++i) {
             if (_stalagtites_set.find(ci[i]) != _stalagtites_set.end()) {
@@ -63,55 +63,69 @@ public:
                 std::cout << "Hit a stalagmite." << std::endl;
             }
         }
-
+        return ci.size();
     }
 
 private:
+//
+
 
      void moveLeft(void) {
          // ensure not off left edge
          QPointF p = _pi->pos();
-         QPointF p2 = _view->mapFromScene(p);
-         if (p2.x() > 0) {
-            p.setX(p.x() - 10);
-            _pi->setPos(p);
-            _view->centerOn(_pi->x(), _view->height()/2);
+         if (!collide()) {
+         //if (p2.x() > 0) {
+             p.setX(p.x() - 10);
          } else {
+
              std::cout << "at left edge" << std::endl;
          }
+         _pi->setPos(p);
+
+         _view->centerOn(_pi->x(), _view->height()/2);
+
          log();
-         collide();
      }
      void moveRight(void) {
          // ensure not off right edge
          QPointF p = _pi->pos();
-         QPointF p2 = _view->mapFromScene(p);
-         if (p2.x() < _view->viewport()->width() - 20) {
+         if (!collide()) {
+         //if (p2.x() < _view->viewport()->width() - 20) {
              p.setX(p.x() + 10);
-            _pi->setPos(p);
-            _view->centerOn(_pi->x(), _view->height()/2);
          } else {
              std::cout << "at right edge" << std::endl;
          }
-         log();
-         collide();
-     }
-
-     void moveUp(void) {
-         QPointF p = _pi->pos();
-         p.setY(p.y() - 0.5);
          _pi->setPos(p);
+
          _view->centerOn(_pi->x(), _view->height()/2);
          log();
-         collide();
+     }
+
+     // The top and bottom edges
+     void moveUp(void) {
+         QPointF p = _pi->pos();
+         if (!collide()) {
+         //if (p2.y() > 0) {
+            p.setY(p.y() - 10);
+         } else {
+             std::cout << "at top edge" << std::endl;
+         }
+         _pi->setPos(p);
+
+         _view->centerOn(_pi->x(), _view->height()/2);
+         log();
      }
      void moveDown(void) {
          QPointF p = _pi->pos();
-         p.setY(p.y() + 0.5);
+         if (!collide()) {
+         //if (p2.y() < _view->viewport()->height() - 20) {
+            p.setY(p.y() + 10);
+         } else {
+             std::cout << "at bottom edge" << std::endl;
+         }
          _pi->setPos(p);
          _view->centerOn(_pi->x(), _view->height()/2);
          log();
-         collide();
      }
 
      QGraphicsView* _view;
