@@ -4,6 +4,7 @@
 #include <vector>
 #include <QPolygonF>
 #include <QScrollBar>
+#include <set>
 
 #include "MotionFilter.h"
 std::vector<int> stalagtites{0,0,0,0,1,1,2,2,1,1,1,3,1,0,0,1,4,0,0,1};
@@ -18,12 +19,18 @@ int main(int argc, char** argv) {
         QPen p;
         p.setWidth(0);
 
+        std::set<QGraphicsItem *> stalagtites_set;
         for (unsigned int i = 0; i < stalagtites.size()-1; ++i) {
-           scene->addLine(QLineF(i,stalagtites[i],(i+1.),stalagtites[i+1]), p)->setScale(72);
+           QGraphicsItem* item = scene->addLine(QLineF(i,stalagtites[i],(i+1.),stalagtites[i+1]), p);
+           item->setScale(72);
+           stalagtites_set.insert(item);
         }
 
+        std::set<QGraphicsItem *> stalagmites_set;
         for (unsigned int i = 0; i < stalagmites.size()-1; ++i) {
-            scene->addLine(QLineF(i,10-stalagmites[i],(i+1.),10-stalagmites[i+1]), p)->setScale(72);
+            QGraphicsItem* item = scene->addLine(QLineF(i,10-stalagmites[i],(i+1.),10-stalagmites[i+1]), p);
+            item->setScale(72);
+            stalagmites_set.insert(item);
         }
 
         QPolygonF polygon;
@@ -40,7 +47,7 @@ int main(int argc, char** argv) {
         view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         view.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-        MotionFilter* motion_filter = new MotionFilter(&view, pi);
+        MotionFilter* motion_filter = new MotionFilter(&view, pi, stalagtites_set, stalagmites_set);
 
         view.installEventFilter(motion_filter);
 
