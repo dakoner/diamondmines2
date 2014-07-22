@@ -7,6 +7,7 @@
 #include <QEvent>
 #include <QGraphicsView>
 #include <QKeyEvent>
+#include <iostream>
 
 class MotionFilter : public QObject
  {
@@ -40,6 +41,11 @@ public:
          }
      }
 
+     void collide() {
+        QList<QGraphicsItem* > ci = _view->scene()->collidingItems(_pi);
+        std::cout << ci.size() << std::endl;
+    }
+
 private:
 
      void moveLeft(void) {
@@ -47,25 +53,32 @@ private:
          QPointF p = _pi->pos();
          p.setX(p.x() - 1);
          _pi->setPos(p);
-         _view->centerOn(_pi);
+         _view->centerOn(_pi->x(), _view->height()/2);
+         collide();
      }
      void moveRight(void) {
          // ensure not off right edge
          QPointF p = _pi->pos();
          p.setX(p.x() + 1);
          _pi->setPos(p);
-         _view->centerOn(_pi);
+         _view->centerOn(_pi->x(), _view->height()/2);
+         collide();
      }
 
      void moveUp(void) {
          QPointF p = _pi->pos();
          p.setY(p.y() - 0.5);
          _pi->setPos(p);
+         _view->centerOn(_pi->x(), _view->height()/2);
+
+         collide();
      }
      void moveDown(void) {
          QPointF p = _pi->pos();
          p.setY(p.y() + 0.5);
          _pi->setPos(p);
+         _view->centerOn(_pi->x(), _view->height()/2);
+         collide();
      }
 
      QGraphicsView* _view;
