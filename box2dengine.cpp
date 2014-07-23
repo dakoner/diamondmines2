@@ -322,6 +322,7 @@ void QtBox2DEngine::setGravity(float32 g)
  */
 void QtBox2DEngine::timerEvent(QTimerEvent *event)
 {
+    std::cout << "timer" << std::endl;
     if (m_running && event->timerId() == m_timer) {
         m_world->Step(1.0/m_hertz, m_velocityIter, m_positionIter);
         emit step();
