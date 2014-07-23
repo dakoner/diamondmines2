@@ -9,14 +9,15 @@
 #include <QKeyEvent>
 #include <QScrollBar>
 #include <set>
+#include "box2dengine.h"
 
 class MotionFilter : public QObject
  {
     Q_OBJECT
 
 public:
-    MotionFilter(QGraphicsView* view, QGraphicsPolygonItem* pi, const std::set<QGraphicsItem*> &stalagtites_set, const std::set<QGraphicsItem*> &stalagmites_set):
-        _view(view), _pi(pi), _stalagtites_set(stalagtites_set), _stalagmites_set(stalagmites_set) { }
+    MotionFilter(QGraphicsView* view, QtBox2DEngine* engine, QGraphicsPolygonItem* pi, const std::set<QGraphicsItem*> &stalagtites_set, const std::set<QGraphicsItem*> &stalagmites_set):
+        _view(view), _engine(engine), _pi(pi), _stalagtites_set(stalagtites_set), _stalagmites_set(stalagmites_set) { }
 
  protected:
      bool eventFilter(QObject *obj, QEvent *event) {
@@ -44,12 +45,14 @@ public:
      }
 
      void log() {
-         QPointF p = _pi->pos();
-         std::cout << _view->horizontalScrollBar()->minimum() << " " << _view->horizontalScrollBar()->value() << " " << _view->horizontalScrollBar()->maximum() << std::endl;
-         std::cout << _view->viewport()->width() << " " << _view->viewport()->height() << std::endl;
-         std::cout << p.x() << " " << p.y() << std::endl;
-         QPointF p2 = _view->mapFromScene(p);
-         std::cout << p2.x() << " " << p2.y() << std::endl;
+
+         QList<b2Body*> bodyList = _engine->bodyList();
+         QList<b2Body*>::iterator it;
+         for (it = bodyList.begin(); it != bodyList.end(); ++it) {
+             if ((*it)->GetType() == b2BodyType(2)) {
+                 std::cout << (*it)->GetPosition().x << " " << (*it)->GetPosition().y << std::endl;
+             }
+         }
 
      }
 
@@ -129,6 +132,7 @@ private:
      }
 
      QGraphicsView* _view;
+     QtBox2DEngine* _engine;
      QGraphicsPolygonItem* _pi;
      std::set<QGraphicsItem*> _stalagtites_set;
      std::set<QGraphicsItem*> _stalagmites_set;

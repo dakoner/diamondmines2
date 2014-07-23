@@ -94,12 +94,13 @@ int main(int argc, char** argv) {
         view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         view.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-        MotionFilter* motion_filter = new MotionFilter(&view, pi, stalagtites_set, stalagmites_set);
+        MotionFilter* motion_filter = new MotionFilter(&view, &engine, pi, stalagtites_set, stalagmites_set);
 
         view.installEventFilter(motion_filter);
 
         view.centerOn(pi->x(), view.height()/2);
 
         engine.start();
+
         return app.exec();
 }
