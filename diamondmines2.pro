@@ -18,7 +18,8 @@ SOURCES += main.cpp \
 
 HEADERS  += \
     MotionFilter.h \
-    box2dengine.h
+    box2dengine.h \
+    UpdateReceiver.h
 
 FORMS    +=
 

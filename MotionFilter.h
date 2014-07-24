@@ -51,6 +51,7 @@ public:
          for (it = bodyList.begin(); it != bodyList.end(); ++it) {
              if ((*it)->GetType() == b2BodyType(2)) {
                  std::cout << (*it)->GetPosition().x << " " << (*it)->GetPosition().y << std::endl;
+
              }
          }
 
