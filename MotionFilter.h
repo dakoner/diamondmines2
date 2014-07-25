@@ -16,8 +16,8 @@ class MotionFilter : public QObject
     Q_OBJECT
 
 public:
-    MotionFilter(QGraphicsView* view, QtBox2DEngine* engine, QGraphicsPolygonItem* pi, const std::set<QGraphicsItem*> &stalagtites_set, const std::set<QGraphicsItem*> &stalagmites_set):
-        _view(view), _engine(engine), _pi(pi), _stalagtites_set(stalagtites_set), _stalagmites_set(stalagmites_set) { }
+    MotionFilter(QGraphicsView* view, QtBox2DEngine* engine, b2Body *ship_body, QGraphicsPolygonItem* pi, const std::set<QGraphicsItem*> &stalagtites_set, const std::set<QGraphicsItem*> &stalagmites_set):
+        _view(view), _engine(engine), _ship_body(ship_body), _pi(pi), _stalagtites_set(stalagtites_set), _stalagmites_set(stalagmites_set) { }
 
  protected:
      bool eventFilter(QObject *obj, QEvent *event) {
@@ -76,15 +76,17 @@ private:
 
      void moveLeft(void) {
          // ensure not off left edge
-         QPointF p = _pi->pos();
-         if (!collide()) {
+         //QPointF p = _pi->pos();
+         //if (!collide()) {
          //if (p2.x() > 0) {
-             p.setX(p.x() - 10);
-         } else {
 
-             std::cout << "at left edge" << std::endl;
-         }
-         _pi->setPos(p);
+             //p.setX(_ship_body->GetPosition().x - 10);
+             _ship_body->SetTransform(b2Vec2(_ship_body->GetPosition().x - 10, _ship_body->GetPosition().y) ,_ship_body->GetAngle());
+         //} else {
+
+         //    std::cout << "at left edge" << std::endl;
+         //}
+         _pi->setPos(_ship_body->GetPosition().x, _ship_body->GetPosition().y);
 
          _view->centerOn(_pi->x(), _view->height()/2);
 
@@ -92,14 +94,14 @@ private:
      }
      void moveRight(void) {
          // ensure not off right edge
-         QPointF p = _pi->pos();
-         if (!collide()) {
+         //QPointF p = _pi->pos();
+         //if (!collide()) {
          //if (p2.x() < _view->viewport()->width() - 20) {
-             p.setX(p.x() + 10);
-         } else {
-             std::cout << "at right edge" << std::endl;
-         }
-         _pi->setPos(p);
+         _ship_body->SetTransform(b2Vec2(_ship_body->GetPosition().x + 10, _ship_body->GetPosition().y) ,_ship_body->GetAngle());
+         //} else {
+         //    std::cout << "at right edge" << std::endl;
+         //}
+             _pi->setPos(_ship_body->GetPosition().x, _ship_body->GetPosition().y);
 
          _view->centerOn(_pi->x(), _view->height()/2);
          log();
@@ -107,33 +109,34 @@ private:
 
      // The top and bottom edges
      void moveUp(void) {
-         QPointF p = _pi->pos();
-         if (!collide()) {
+         //QPointF p = _pi->pos();
+         //if (!collide()) {
          //if (p2.y() > 0) {
-            p.setY(p.y() - 10);
-         } else {
-             std::cout << "at top edge" << std::endl;
-         }
-         _pi->setPos(p);
+         _ship_body->SetTransform(b2Vec2(_ship_body->GetPosition().x, _ship_body->GetPosition().y - 10) ,_ship_body->GetAngle());
+         //} else {
+         //    std::cout << "at top edge" << std::endl;
+         //}
+             _pi->setPos(_ship_body->GetPosition().x, _ship_body->GetPosition().y);
 
          _view->centerOn(_pi->x(), _view->height()/2);
          log();
      }
      void moveDown(void) {
-         QPointF p = _pi->pos();
-         if (!collide()) {
+         //QPointF p = _pi->pos();
+         //if (!collide()) {
          //if (p2.y() < _view->viewport()->height() - 20) {
-            p.setY(p.y() + 10);
-         } else {
-             std::cout << "at bottom edge" << std::endl;
-         }
-         _pi->setPos(p);
+         _ship_body->SetTransform(b2Vec2(_ship_body->GetPosition().x, _ship_body->GetPosition().y + 10) , _ship_body->GetAngle());
+         //} else {
+         //    std::cout << "at bottom edge" << std::endl;
+         //}
+         _pi->setPos(_ship_body->GetPosition().x, _ship_body->GetPosition().y);
          _view->centerOn(_pi->x(), _view->height()/2);
          log();
      }
 
      QGraphicsView* _view;
      QtBox2DEngine* _engine;
+     b2Body* _ship_body;
      QGraphicsPolygonItem* _pi;
      std::set<QGraphicsItem*> _stalagtites_set;
      std::set<QGraphicsItem*> _stalagmites_set;

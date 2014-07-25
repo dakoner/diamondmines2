@@ -20,7 +20,7 @@ void addLine(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, std::se
     item->setScale(72);
     set->insert(item);
     b2EdgeShape *edge = new b2EdgeShape;
-    edge->Set(b2Vec2(x1,y1), b2Vec2(x2,y2));
+    edge->Set(b2Vec2(x1*72,y1*72), b2Vec2(x2*72,y2*72));
     engine->createFixture(body, edge);
 
 }
@@ -38,7 +38,7 @@ QGraphicsPolygonItem* addPolygon(b2Body* body, QGraphicsScene* scene, QtBox2DEng
 
     for (int i = 0; i < count; ++i) {
         QPointF p = polygon.at(i);
-        vertices[i].Set(p.x(), -p.y());
+        vertices[i].Set(p.x()*8, -p.y()*8);
     }
     b2PolygonShape *polyshape = new b2PolygonShape;
     polyshape->Set(vertices, count);
@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
     polygon << QPointF(0,3) << QPointF(1,2) << QPointF(2,2.75)<< QPointF(3,1.5) << QPointF(2,.25) << QPointF(1, 1) << QPointF(0, 0) ;
 
 
-    b2Body* ship_body = engine.createBody(b2_dynamicBody, 5, 4, 0, false);
+    b2Body* ship_body = engine.createBody(b2_dynamicBody, 720, 360, 0, false);
     QGraphicsPolygonItem* pi = addPolygon(ship_body, scene, &engine, polygon);
 
     QGraphicsView view;
@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
     view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    MotionFilter* motion_filter = new MotionFilter(&view, &engine, pi, stalagtites_set, stalagmites_set);
+    MotionFilter* motion_filter = new MotionFilter(&view, &engine, ship_body, pi, stalagtites_set, stalagmites_set);
 
     view.installEventFilter(motion_filter);
 
@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
     engine.start();
 
     engine.setInterval(50);
-    UpdateReceiver update_receiver(&engine);
+    UpdateReceiver update_receiver(&engine, &view,  pi);
     update_receiver.connect(&engine, SIGNAL(step()), &update_receiver, SLOT(update()));
     return app.exec();
 }
