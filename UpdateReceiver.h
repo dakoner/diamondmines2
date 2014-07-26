@@ -23,6 +23,8 @@ public slots:
                 std::cout << (*it)->GetPosition().x << " " << (*it)->GetPosition().y << std::endl;
                 _pi->setPos((*it)->GetPosition().x, (*it)->GetPosition().y);
                 _view->centerOn(_pi->x(), _view->height()/2);
+                b2Vec2 lv = (*it)->GetLinearVelocity();
+                (*it)->SetLinearVelocity(b2Vec2(lv.x*.995, lv.y*.995));
 
             }
         }

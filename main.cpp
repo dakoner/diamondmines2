@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
     p.setWidth(0);
 
     QtBox2DEngine engine;
-    engine.setGravity(-9);
+    engine.setGravity(0);
 
 
     std::set<QGraphicsItem *> stalagtites_set;
