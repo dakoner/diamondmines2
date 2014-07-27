@@ -12,15 +12,14 @@
 
 std::vector<int> stalagtites{0,0,0,0,1,1,2,2,1,1,1,3,1,0,0,1,4,0,0,1,0,0,0,0,2,2,2,2,2,3,3,4,4,3,0,0,0,0,0,1};
 std::vector<int> stalagmites{0,0,0,0,2,2,2,2,2,3,3,4,4,3,0,0,0,0,0,1,0,0,0,0,1,1,2,2,1,1,1,3,1,0,0,1,4,0,0,1};
-
+float scale = 72.;
 
 void addLine(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, double x1, double y1, double x2, double y2) {
     QPen p;
     p.setWidth(0);
-    QGraphicsItem* item = scene->addLine(QLineF(x1, y1, x2, y2), p);
-    item->setScale(72);
+    scene->addLine(QLineF(x1, y1, x2, y2), p);
     b2EdgeShape *edge = new b2EdgeShape;
-    edge->Set(b2Vec2(x1*72,y1*72), b2Vec2(x2*72,y2*72));
+    edge->Set(b2Vec2(x1,-y1), b2Vec2(x2,-y2));
     engine->createFixture(body, edge);
 
 }
@@ -31,10 +30,10 @@ void addChain(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, const 
     p.setWidth(0);
 
     b2Vec2* vertices = new b2Vec2[points.size()];
+    // this loop will miss adding the last vertex to box2d.
     for (int i=0; i < points.size()-1; ++i) {
-        QGraphicsItem* item = scene->addLine(QLineF(points[i].x(), points[i].y(), points[i+1].x(), points[i+1].y()), p);
-        item->setScale(72);
-        vertices[i] = b2Vec2(points[i].x()*72, points[i].y()*72);
+        scene->addLine(QLineF(points[i].x(), points[i].y(), points[i+1].x(), points[i+1].y()), p);
+        vertices[i] = b2Vec2(points[i].x(), -points[i].y());
     }
     b2ChainShape *chain = new b2ChainShape;
     chain->CreateChain(vertices, points.size());
@@ -45,15 +44,13 @@ QGraphicsPolygonItem* addPolygon(b2Body* body, QGraphicsScene* scene, QtBox2DEng
     QPen p;
     p.setWidth(0);
     QGraphicsPolygonItem* pi = scene->addPolygon(polygon, p);
-    pi->setScale(8);
-    pi->setPos(720,360);
 
     int count = polygon.count();
     b2Vec2* vertices = new b2Vec2[count];
 
     for (int i = 0; i < count; ++i) {
         QPointF p = polygon.at(i);
-        vertices[i].Set(p.x()*8, -p.y()*8);
+        vertices[i].Set(p.x(), -p.y());
     }
     b2PolygonShape *polyshape = new b2PolygonShape;
     polyshape->Set(vertices, count);
@@ -86,7 +83,7 @@ int main(int argc, char** argv) {
     }
 
 
-    b2Body* stalagmites_body = engine.createBody(b2_staticBody, 0, 0, 0, false);
+    b2Body* stalagmites_body = engine.createBody(b2_staticBody,0 , 0, false);
     {
         QList<QPointF> points;
         for (unsigned int i = 0; i < stalagmites.size(); ++i)
@@ -95,33 +92,34 @@ int main(int argc, char** argv) {
     }
 
 
-    addLine(stalagtites_body, scene, &engine,  stalagtites.size()-1, stalagtites[stalagtites.size()-1], stalagtites.size(), 0);
-    addLine(stalagtites_body, scene, &engine,0,0,0,10);
+    //addLine(stalagtites_body, scene, &engine,  stalagtites.size()-1, stalagtites[stalagtites.size()-1], stalagtites.size(), 0);
+    //addLine(stalagtites_body, scene, &engine,0,0,0,10);
 
     QPolygonF polygon;
-    polygon << QPointF(0, 0) << QPointF(1, 1)<< QPointF(2,.25)  << QPointF(3,1.5) << QPointF(2,2.75)<< QPointF(1,2) << QPointF(0,3) ;
+    polygon << QPointF(0, 0) << QPointF(1/10., 1/10. )<< QPointF(2/10.,.25/10.)  << QPointF(3/10.,1.5/10.) << QPointF(2/10.,2.75/10.)<< QPointF(1/10.,2/10.) << QPointF(0,3/10.) ;
 
 
-    b2Body* ship_body = engine.createBody(b2_dynamicBody, 720, 360, 0, false);
+    b2Body* ship_body = engine.createBody(b2_dynamicBody, 0, 0, 0, false);
     QGraphicsPolygonItem* pi = addPolygon(ship_body, scene, &engine, polygon);
 
     QGraphicsView view;
     view.resize(1280,720);
-    view.show();
+    view.scale(scale, scale);
     view.setScene(scene);
     view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    //view.centerOn(pi->x(), view.height()/2);
 
     MotionFilter* motion_filter = new MotionFilter(&view, &engine, ship_body, pi);
 
     view.installEventFilter(motion_filter);
-
-    view.centerOn(pi->x(), view.height()/2);
 
     engine.start();
 
     engine.setInterval(50);
     UpdateReceiver update_receiver(&engine, &view,  pi);
     update_receiver.connect(&engine, SIGNAL(step()), &update_receiver, SLOT(update()));
+
+    view.show();
     return app.exec();
 }

@@ -44,18 +44,6 @@ public:
          }
      }
 
-     void log() {
-
-         QList<b2Body*> bodyList = _engine->bodyList();
-         QList<b2Body*>::iterator it;
-         for (it = bodyList.begin(); it != bodyList.end(); ++it) {
-             if ((*it)->GetType() == b2BodyType(2)) {
-                 std::cout << (*it)->GetPosition().x << " " << (*it)->GetPosition().y << std::endl;
-
-             }
-         }
-
-     }
 
 
 
@@ -65,67 +53,33 @@ private:
 
 
      void moveLeft(void) {
-         // ensure not off left edge
-         //QPointF p = _pi->pos();
-         //if (!collide()) {
-         //if (p2.x() > 0) {
 
-             //p.setX(_ship_body->GetPosition().x - 10);
              b2Vec2 lv = _ship_body->GetLinearVelocity();
              _ship_body->SetLinearVelocity(b2Vec2(lv.x-1, lv.y));
-         //} else {
 
-         //    std::cout << "at left edge" << std::endl;
-         //}
-         _pi->setPos(_ship_body->GetPosition().x, _ship_body->GetPosition().y);
 
-         _view->centerOn(_pi->x(), _view->height()/2);
-
-         log();
      }
      void moveRight(void) {
-         // ensure not off right edge
-         //QPointF p = _pi->pos();
-         //if (!collide()) {
-         //if (p2.x() < _view->viewport()->width() - 20) {
+
          b2Vec2 lv = _ship_body->GetLinearVelocity();
          _ship_body->SetLinearVelocity(b2Vec2(lv.x+1, lv.y));
-         //} else {
-         //    std::cout << "at right edge" << std::endl;
-         //}
-             _pi->setPos(_ship_body->GetPosition().x, _ship_body->GetPosition().y);
 
-         _view->centerOn(_pi->x(), _view->height()/2);
-         log();
+
      }
 
      // The top and bottom edges
      void moveUp(void) {
-         //QPointF p = _pi->pos();
-         //if (!collide()) {
-         //if (p2.y() > 0) {
-         b2Vec2 lv = _ship_body->GetLinearVelocity();
-         _ship_body->SetLinearVelocity(b2Vec2(lv.x+1, lv.y-1));
-         //} else {
-         //    std::cout << "at top edge" << std::endl;
-         //}
-             _pi->setPos(_ship_body->GetPosition().x, _ship_body->GetPosition().y);
 
-         _view->centerOn(_pi->x(), _view->height()/2);
-         log();
-     }
-     void moveDown(void) {
-         //QPointF p = _pi->pos();
-         //if (!collide()) {
-         //if (p2.y() < _view->viewport()->height() - 20) {
          b2Vec2 lv = _ship_body->GetLinearVelocity();
          _ship_body->SetLinearVelocity(b2Vec2(lv.x, lv.y+1));
-         //} else {
-         //    std::cout << "at bottom edge" << std::endl;
-         //}
-         _pi->setPos(_ship_body->GetPosition().x, _ship_body->GetPosition().y);
-         _view->centerOn(_pi->x(), _view->height()/2);
-         log();
+
+
+     }
+     void moveDown(void) {
+
+         b2Vec2 lv = _ship_body->GetLinearVelocity();
+         _ship_body->SetLinearVelocity(b2Vec2(lv.x, lv.y-1));
+
      }
 
      QGraphicsView* _view;
