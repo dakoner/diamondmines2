@@ -16,8 +16,8 @@ class MotionFilter : public QObject
     Q_OBJECT
 
 public:
-    MotionFilter(QGraphicsView* view, QtBox2DEngine* engine, b2Body *ship_body, QGraphicsPolygonItem* pi, const std::set<QGraphicsItem*> &stalagtites_set, const std::set<QGraphicsItem*> &stalagmites_set):
-        _view(view), _engine(engine), _ship_body(ship_body), _pi(pi), _stalagtites_set(stalagtites_set), _stalagmites_set(stalagmites_set) { }
+    MotionFilter(QGraphicsView* view, QtBox2DEngine* engine, b2Body *ship_body, QGraphicsPolygonItem* pi):
+        _view(view), _engine(engine), _ship_body(ship_body), _pi(pi) { }
 
  protected:
      bool eventFilter(QObject *obj, QEvent *event) {

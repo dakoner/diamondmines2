@@ -13,18 +13,33 @@
 std::vector<int> stalagtites{0,0,0,0,1,1,2,2,1,1,1,3,1,0,0,1,4,0,0,1,0,0,0,0,2,2,2,2,2,3,3,4,4,3,0,0,0,0,0,1};
 std::vector<int> stalagmites{0,0,0,0,2,2,2,2,2,3,3,4,4,3,0,0,0,0,0,1,0,0,0,0,1,1,2,2,1,1,1,3,1,0,0,1,4,0,0,1};
 
-void addLine(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, std::set<QGraphicsItem*>* set, double x1, double y1, double x2, double y2) {
+
+void addLine(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, double x1, double y1, double x2, double y2) {
     QPen p;
     p.setWidth(0);
     QGraphicsItem* item = scene->addLine(QLineF(x1, y1, x2, y2), p);
     item->setScale(72);
-    set->insert(item);
     b2EdgeShape *edge = new b2EdgeShape;
     edge->Set(b2Vec2(x1*72,y1*72), b2Vec2(x2*72,y2*72));
     engine->createFixture(body, edge);
 
 }
 
+
+void addChain(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, const QList<QPointF>& points) {
+    QPen p;
+    p.setWidth(0);
+
+    b2Vec2* vertices = new b2Vec2[points.size()];
+    for (int i=0; i < points.size()-1; ++i) {
+        QGraphicsItem* item = scene->addLine(QLineF(points[i].x(), points[i].y(), points[i+1].x(), points[i+1].y()), p);
+        item->setScale(72);
+        vertices[i] = b2Vec2(points[i].x()*72, points[i].y()*72);
+    }
+    b2ChainShape *chain = new b2ChainShape;
+    chain->CreateChain(vertices, points.size());
+    engine->createFixture(body, chain);
+}
 
 QGraphicsPolygonItem* addPolygon(b2Body* body, QGraphicsScene* scene, QtBox2DEngine* engine, const QPolygonF& polygon) {
     QPen p;
@@ -62,25 +77,29 @@ int main(int argc, char** argv) {
     engine.setGravity(0);
 
 
-    std::set<QGraphicsItem *> stalagtites_set;
     b2Body* stalagtites_body = engine.createBody(b2_staticBody, 0, 0, 0, false);
-    for (unsigned int i = 0; i < stalagtites.size()-1; ++i)
-        addLine(stalagtites_body, scene, &engine, &stalagtites_set, i,stalagtites[i],(i+1.),stalagtites[i+1]);
-    addLine(stalagtites_body, scene, &engine, &stalagtites_set, stalagtites.size()-1, stalagtites[stalagtites.size()-1], stalagtites.size(), 0);
-    addLine(stalagtites_body, scene, &engine, &stalagtites_set,0,0,0,10);
-
-
-
-    std::set<QGraphicsItem *> stalagmites_set;
-    b2Body* stalagmites_body = engine.createBody(b2_staticBody, 0, 0, 0, false);
-    for (unsigned int i = 0; i < stalagmites.size()-1; ++i) {
-        addLine(stalagmites_body, scene, &engine, &stalagmites_set, i,10-stalagmites[i],(i+1.),10-stalagmites[i+1]);
+    {
+        QList<QPointF> points;
+        for (unsigned int i = 0; i < stalagtites.size(); ++i)
+            points.push_back(QPointF(i,stalagtites[i]));
+        addChain(stalagtites_body, scene, &engine,  points);
     }
-    addLine(stalagmites_body, scene, &engine, &stalagmites_set, stalagmites.size()-1, 10-stalagmites[stalagmites.size()-1], stalagmites.size(), 10);
-    addLine(stalagmites_body, scene, &engine, &stalagmites_set, stalagmites.size(),0,stalagmites.size(),10);
+
+
+    b2Body* stalagmites_body = engine.createBody(b2_staticBody, 0, 0, 0, false);
+    {
+        QList<QPointF> points;
+        for (unsigned int i = 0; i < stalagmites.size(); ++i)
+            points.push_back(QPointF(i,10-stalagmites[i]));
+        addChain(stalagmites_body, scene, &engine, points);
+    }
+
+
+    addLine(stalagtites_body, scene, &engine,  stalagtites.size()-1, stalagtites[stalagtites.size()-1], stalagtites.size(), 0);
+    addLine(stalagtites_body, scene, &engine,0,0,0,10);
 
     QPolygonF polygon;
-    polygon << QPointF(0,3) << QPointF(1,2) << QPointF(2,2.75)<< QPointF(3,1.5) << QPointF(2,.25) << QPointF(1, 1) << QPointF(0, 0) ;
+    polygon << QPointF(0, 0) << QPointF(1, 1)<< QPointF(2,.25)  << QPointF(3,1.5) << QPointF(2,2.75)<< QPointF(1,2) << QPointF(0,3) ;
 
 
     b2Body* ship_body = engine.createBody(b2_dynamicBody, 720, 360, 0, false);
@@ -93,7 +112,7 @@ int main(int argc, char** argv) {
     view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    MotionFilter* motion_filter = new MotionFilter(&view, &engine, ship_body, pi, stalagtites_set, stalagmites_set);
+    MotionFilter* motion_filter = new MotionFilter(&view, &engine, ship_body, pi);
 
     view.installEventFilter(motion_filter);
 
