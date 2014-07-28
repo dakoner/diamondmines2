@@ -10,8 +10,16 @@
 #include "MotionFilter.h"
 #include "box2dengine.h"
 
-std::vector<int> stalagtites{0,0,0,0,1,1,2,2,1,1,1,3,1,0,0,1,4,0,0,1,0,0,0,0,2,2,2,2,2,3,3,4,4,3,0,0,0,0,0,1};
+/*
+std::vector<int> stalagtites{0,1,2,3,4,5,6,7,8,7,6,5,4,3,2,1};
+std::vector<int> stalagmites{9,8,7,6,5,4,3,2,1,2,3,4,5,6,7,8};
+*/
+std::vector<int> stalagtites{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+std::vector<int> stalagmites{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+/*
+ std::vector<int> stalagtites{0,0,0,0,1,1,2,2,1,1,1,3,1,0,0,1,4,0,0,1,0,0,0,0,2,2,2,2,2,3,3,4,4,3,0,0,0,0,0,1};
 std::vector<int> stalagmites{0,0,0,0,2,2,2,2,2,3,3,4,4,3,0,0,0,0,0,1,0,0,0,0,1,1,2,2,1,1,1,3,1,0,0,1,4,0,0,1};
+*/
 float scale = 72.;
 
 void addLine(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, double x1, double y1, double x2, double y2) {
@@ -32,7 +40,9 @@ void addChain(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, const 
     b2Vec2* vertices = new b2Vec2[points.size()];
     // this loop will miss adding the last vertex to box2d.
     for (int i=0; i < points.size()-1; ++i) {
-        scene->addLine(QLineF(points[i].x(), points[i].y(), points[i+1].x(), points[i+1].y()), p);
+
+        scene->addLine(points[i].x(), points[i].y(), points[i+1].x(), points[i+1].y(), p);
+
         vertices[i] = b2Vec2(points[i].x(), -points[i].y());
     }
     b2ChainShape *chain = new b2ChainShape;
@@ -92,14 +102,15 @@ int main(int argc, char** argv) {
     }
 
 
-    //addLine(stalagtites_body, scene, &engine,  stalagtites.size()-1, stalagtites[stalagtites.size()-1], stalagtites.size(), 0);
-    //addLine(stalagtites_body, scene, &engine,0,0,0,10);
+ //   addLine(stalagtites_body, scene, &engine,0,0,0,10);
+ //   addLine(stalagtites_body, scene, &engine,stalagtites.size()-1,0,stalagtites.size()-1,10);
+
 
     QPolygonF polygon;
-    polygon << QPointF(0, 0) << QPointF(1/10., 1/10. )<< QPointF(2/10.,.25/10.)  << QPointF(3/10.,1.5/10.) << QPointF(2/10.,2.75/10.)<< QPointF(1/10.,2/10.) << QPointF(0,3/10.) ;
+    polygon << QPointF(0, 0) << QPointF(.1, .1 )<< QPointF(0.2,0.025)  << QPointF(.3333,.15) << QPointF(.2,.275)<< QPointF(.1,.2) << QPointF(0,.3333) ;
 
 
-    b2Body* ship_body = engine.createBody(b2_dynamicBody, 0, 0, 0, false);
+    b2Body* ship_body = engine.createBody(b2_dynamicBody, 0, -2, 0, false);
     QGraphicsPolygonItem* pi = addPolygon(ship_body, scene, &engine, polygon);
 
     QGraphicsView view;
@@ -114,9 +125,10 @@ int main(int argc, char** argv) {
 
     view.installEventFilter(motion_filter);
 
+    engine.setGravity(0);
     engine.start();
 
-    engine.setInterval(50);
+    engine.setInterval(100);
     UpdateReceiver update_receiver(&engine, &view,  pi);
     update_receiver.connect(&engine, SIGNAL(step()), &update_receiver, SLOT(update()));
 
