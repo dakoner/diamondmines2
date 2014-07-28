@@ -54,15 +54,13 @@ private:
 
      void moveLeft(void) {
 
-             b2Vec2 lv = _ship_body->GetLinearVelocity();
-             _ship_body->SetLinearVelocity(b2Vec2(lv.x-1, lv.y));
+             _ship_body->ApplyForce(b2Vec2(-1, 0), _ship_body->GetWorldCenter(), true);
 
 
      }
      void moveRight(void) {
 
-         b2Vec2 lv = _ship_body->GetLinearVelocity();
-         _ship_body->SetLinearVelocity(b2Vec2(lv.x+1, lv.y));
+         _ship_body->ApplyForce(b2Vec2(1, 0), _ship_body->GetWorldCenter(), true);
 
 
      }
@@ -70,15 +68,13 @@ private:
      // The top and bottom edges
      void moveUp(void) {
 
-         b2Vec2 lv = _ship_body->GetLinearVelocity();
-         _ship_body->SetLinearVelocity(b2Vec2(lv.x, lv.y+1));
+         _ship_body->ApplyForce(b2Vec2(0, 1), _ship_body->GetWorldCenter(), true);
 
 
      }
      void moveDown(void) {
 
-         b2Vec2 lv = _ship_body->GetLinearVelocity();
-         _ship_body->SetLinearVelocity(b2Vec2(lv.x, lv.y-1));
+         _ship_body->ApplyForce(b2Vec2(0, -1), _ship_body->GetWorldCenter(), true);
 
      }
 
