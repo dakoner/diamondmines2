@@ -11,7 +11,7 @@
 #include "box2dengine.h"
 
 
- std::vector<int> stalagtites{0,0,0,0,1,1,2,2,1,1,1,3,1,0,0,1,4,0,0,1,0,0,0,0,2,2,2,2,2,3,3,4,4,3,0,0,0,0,0,1};
+std::vector<int> stalagtites{0,0,0,0,1,1,2,2,1,1,1,3,1,0,0,1,4,0,0,1,0,0,0,0,2,2,2,2,2,3,3,4,4,3,0,0,0,0,0,1};
 std::vector<int> stalagmites{0,0,0,0,2,2,2,2,2,3,3,4,4,3,0,0,0,0,0,1,0,0,0,0,1,1,2,2,1,1,1,3,1,0,0,1,4,0,0,1};
 
 float scale = 72.;
@@ -22,8 +22,9 @@ void addLine(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, double 
     scene->addLine(QLineF(x1, y1, x2, y2), p);
     b2EdgeShape *edge = new b2EdgeShape;
     edge->Set(b2Vec2(x1,-y1), b2Vec2(x2,-y2));
-    engine->createFixture(body, edge);
-
+    b2Fixture* fixture = engine->createFixture(body, edge);
+    fixture->SetRestitution(1);
+    fixture->SetFriction(0);
 }
 
 
@@ -40,7 +41,9 @@ void addChain(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, const 
     }
     b2ChainShape *chain = new b2ChainShape;
     chain->CreateChain(vertices, points.size()-1);
-    engine->createFixture(body, chain);
+    b2Fixture* fixture = engine->createFixture(body, chain);\
+    fixture->SetRestitution(1);
+    fixture->SetFriction(0);
 }
 
 QGraphicsPolygonItem* addPolygon(b2Body* body, QGraphicsScene* scene, QtBox2DEngine* engine, const QPolygonF& polygon) {
@@ -59,7 +62,11 @@ QGraphicsPolygonItem* addPolygon(b2Body* body, QGraphicsScene* scene, QtBox2DEng
     polyshape->Set(vertices, count);
 
 
-    engine->createFixture(body, polyshape);
+
+    b2Fixture* fixture = engine->createFixture(body, polyshape);
+    fixture->SetRestitution(1);
+    fixture->SetFriction(0);
+
     return pi;
 }
 
