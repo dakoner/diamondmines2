@@ -22,7 +22,6 @@ public slots:
                 _view->centerOn(_pi->x(), _view->height()/2);
                 b2Vec2 lv = _ship_body->GetLinearVelocity();
                 _ship_body->SetLinearVelocity(b2Vec2(lv.x*.995, lv.y*.995));
-
             }
         //for (b2Contact* contact = world->GetContactList(); contact; contact = contact->GetNext())
          //     std::cout << "contact: " << contact->GetChildIndexA() << " " << contact->GetChildIndexB() << std::endl;

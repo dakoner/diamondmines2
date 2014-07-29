@@ -103,6 +103,7 @@ int main(int argc, char** argv) {
 
 
     b2Body* ship_body = engine.createBody(b2_dynamicBody, 0, -2, 0, false);
+    ship_body->SetFixedRotation(true);
     QGraphicsPolygonItem* pi = addPolygon(ship_body, scene, &engine, polygon);
 
     QGraphicsView view;
