@@ -16,6 +16,15 @@ std::vector<int> stalagmites{0,0,0,0,2,2,2,2,2,3,3,4,4,3,0,0,0,0,0,1,0,0,0,0,1,1
 
 float scale = 72.;
 
+class MyContactListener: public b2ContactListener {
+  void BeginContact(b2Contact* contact) {
+      std::cout << "Begin contact: " << contact->GetFixtureA() << " " << contact->GetFixtureB() << std::endl;
+  }
+  void EndContact(b2Contact* contact) {
+      std::cout << "End contact: " << contact->GetFixtureA() << " " << contact->GetFixtureB() << std::endl;
+  }
+};
+
 void addLine(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, double x1, double y1, double x2, double y2) {
     QPen p;
     p.setWidth(0);
@@ -127,9 +136,11 @@ int main(int argc, char** argv) {
     engine.setGravity(0);
     engine.start();
 
-    engine.setInterval(100);
+    engine.setInterval(60);
     UpdateReceiver update_receiver(&engine, &view,  pi, ship_body);
     update_receiver.connect(&engine, SIGNAL(step()), &update_receiver, SLOT(update()));
+    MyContactListener myContactListenerInstance;
+    engine.setContactListener(&myContactListenerInstance);
 
     view.show();
     return app.exec();
