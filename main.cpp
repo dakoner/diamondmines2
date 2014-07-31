@@ -118,7 +118,7 @@ int main(int argc, char** argv) {
     polygon << QPointF(0, 0) << QPointF(.1, .1 )<< QPointF(0.2,0.025)  << QPointF(.3333,.15) << QPointF(.2,.275)<< QPointF(.1,.2) << QPointF(0,.3333) ;
 
 
-    b2Body* ship_body = engine.createBody(b2_dynamicBody, 0, -2, 0, false);
+    b2Body* ship_body = engine.createBody(b2_dynamicBody, 0, -5, 0, false);
     ship_body->SetFixedRotation(true);
     QGraphicsPolygonItem* pi = addPolygon(ship_body, scene, &engine, polygon);
 
@@ -137,8 +137,8 @@ int main(int argc, char** argv) {
     engine.start();
 
     engine.setInterval(60);
-    UpdateReceiver update_receiver(&engine, &view,  pi, ship_body);
-    update_receiver.connect(&engine, SIGNAL(step()), &update_receiver, SLOT(update()));
+    UpdateReceiver update_receiver(&view,  pi, ship_body);
+    QObject::connect(&engine, SIGNAL(step()), &update_receiver, SLOT(update()));
     MyContactListener myContactListenerInstance;
     engine.setContactListener(&myContactListenerInstance);
 
