@@ -29,7 +29,8 @@ protected:
             b2Vec2 sp = _ship_body->GetPosition();
             b2Vec2 mp(pos.x(), -pos.y());
             mp -= sp;
-            _ship_body->ApplyForceToCenter(b2Vec2(mp.x/50., mp.y/50.), true);
+            mp *= 0.02;
+            _ship_body->ApplyForceToCenter(mp, true);
             return true;
         }
         return QObject::eventFilter(obj, event);
