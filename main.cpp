@@ -83,7 +83,7 @@ QGraphicsPolygonItem* addPolygon(b2Body* body, QGraphicsScene* scene, QtBox2DEng
 
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
-
+    app.setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents, true);
     QGraphicsScene *scene = new QGraphicsScene();
 
     QPen p;
@@ -118,19 +118,24 @@ int main(int argc, char** argv) {
     polygon << QPointF(0, 0) << QPointF(.1, .1 )<< QPointF(0.2,0.025)  << QPointF(.3333,.15) << QPointF(.2,.275)<< QPointF(.1,.2) << QPointF(0,.3333) ;
 
 
-    b2Body* ship_body = engine.createBody(b2_dynamicBody, 0, -5, 0, false);
+    b2Body* ship_body = engine.createBody(b2_dynamicBody, 2, -5, 0, false);
     ship_body->SetFixedRotation(true);
     QGraphicsPolygonItem* pi = addPolygon(ship_body, scene, &engine, polygon);
+    //pi->setAcceptTouchEvents(true);
 
     QGraphicsView view;
+    view.setMouseTracking(true);
     view.resize(1280,720);
     view.scale(scale, scale);
     view.setScene(scene);
     view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    //view.viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
+    MotionFilter* motion_filter = new MotionFilter(ship_body);
+    SceneMotionFilter* scene_motion_filter = new SceneMotionFilter(ship_body);
 
-    MotionFilter* motion_filter = new MotionFilter(&view, &engine, ship_body, pi);
-
+    // scene event filter required to get mouse events
+    scene->installEventFilter(scene_motion_filter);
     view.installEventFilter(motion_filter);
 
     engine.setGravity(0);

@@ -3,6 +3,8 @@
 #include <iostream>
 
 #include <QGraphicsPolygonItem>
+#include <QGraphicsSceneMouseEvent>
+
 #include <QObject>
 #include <QEvent>
 #include <QGraphicsView>
@@ -11,13 +13,40 @@
 #include <set>
 #include "box2dengine.h"
 
+class SceneMotionFilter : public QObject
+{
+    Q_OBJECT
+
+public:
+    SceneMotionFilter(b2Body *ship_body):
+        _ship_body(ship_body) { }
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) {
+        if (event->type() == QEvent::GraphicsSceneMouseMove) {
+            QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
+            QPointF pos = mouseEvent->scenePos();
+            b2Vec2 sp = _ship_body->GetPosition();
+            b2Vec2 mp(pos.x(), -pos.y());
+            mp -= sp;
+            _ship_body->ApplyForceToCenter(b2Vec2(mp.x/50., mp.y/50.), true);
+            return true;
+        }
+        return QObject::eventFilter(obj, event);
+    }
+
+private:
+    b2Body* _ship_body;
+};
+
+
 class MotionFilter : public QObject
 {
     Q_OBJECT
 
 public:
-    MotionFilter(QGraphicsView* view, QtBox2DEngine* engine, b2Body *ship_body, QGraphicsPolygonItem* pi):
-        _view(view), _engine(engine), _ship_body(ship_body), _pi(pi) { }
+    MotionFilter(b2Body *ship_body):
+        _ship_body(ship_body) { }
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) {
@@ -25,16 +54,16 @@ protected:
             QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
             switch (keyEvent->key()) {
             case Qt::Key_Left:
-                _ship_body->ApplyForce(b2Vec2(-1., 0), _ship_body->GetWorldCenter(), true);
+                _ship_body->ApplyForceToCenter(b2Vec2(-1., 0), true);
                 break;
             case Qt::Key_Right:
-                _ship_body->ApplyForce(b2Vec2(1., 0), _ship_body->GetWorldCenter(), true);
+                _ship_body->ApplyForceToCenter(b2Vec2(1., 0), true);
                 break;
             case Qt::Key_Up:
-                _ship_body->ApplyForce(b2Vec2(0, 1.), _ship_body->GetWorldCenter(), true);
+                _ship_body->ApplyForceToCenter(b2Vec2(0, 1.), true);
                 break;
             case Qt::Key_Down:
-                _ship_body->ApplyForce(b2Vec2(0, -1.), _ship_body->GetWorldCenter(), true);
+                _ship_body->ApplyForceToCenter(b2Vec2(0, -1.), true);
                 break;
             }
         } else {
@@ -45,12 +74,7 @@ protected:
     }
 
 private:
-    QGraphicsView* _view;
-    QtBox2DEngine* _engine;
     b2Body* _ship_body;
-    QGraphicsPolygonItem* _pi;
-    std::set<QGraphicsItem*> _stalagtites_set;
-    std::set<QGraphicsItem*> _stalagmites_set;
 };
 
 #endif // MOTIONFILTER_H
