@@ -26,7 +26,7 @@ class MyContactListener: public b2ContactListener {
 };
 
 void addLine(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, double x1, double y1, double x2, double y2) {
-    QPen p;
+    QPen p(Qt::white);
     p.setWidth(0);
     scene->addLine(QLineF(x1, y1, x2, y2), p);
     b2EdgeShape *edge = new b2EdgeShape;
@@ -38,7 +38,7 @@ void addLine(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, double 
 
 
 void addChain(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, const QList<QPointF>& points) {
-    QPen p;
+    QPen p(Qt::white);
     p.setWidth(0);
 
     b2Vec2* vertices = new b2Vec2[points.size()-1];
@@ -56,7 +56,7 @@ void addChain(b2Body* body, QGraphicsScene *scene, QtBox2DEngine* engine, const 
 }
 
 QGraphicsPolygonItem* addPolygon(b2Body* body, QGraphicsScene* scene, QtBox2DEngine* engine, const QPolygonF& polygon) {
-    QPen p;
+    QPen p(Qt::white);
     p.setWidth(0);
     QGraphicsPolygonItem* pi = scene->addPolygon(polygon, p);
 
@@ -85,9 +85,16 @@ int main(int argc, char** argv) {
     QApplication app(argc, argv);
     app.setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents, true);
     QGraphicsScene *scene = new QGraphicsScene();
+    QGraphicsView view;
+    view.setMouseTracking(true);
+    view.resize(1280,720);
+    view.scale(scale, scale);
+    view.setScene(scene);
+    view.setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
 
-    QPen p;
-    p.setWidth(0);
+    view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    //view.viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
 
     QtBox2DEngine engine;
     engine.setGravity(0);
@@ -123,14 +130,9 @@ int main(int argc, char** argv) {
     QGraphicsPolygonItem* pi = addPolygon(ship_body, scene, &engine, polygon);
     //pi->setAcceptTouchEvents(true);
 
-    QGraphicsView view;
-    view.setMouseTracking(true);
-    view.resize(1280,720);
-    view.scale(scale, scale);
-    view.setScene(scene);
-    view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //view.viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
+
+
+
     MotionFilter* motion_filter = new MotionFilter(ship_body);
     SceneMotionFilter* scene_motion_filter = new SceneMotionFilter(ship_body);
 
