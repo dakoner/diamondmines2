@@ -1,10 +1,10 @@
 #ifndef UPDATERECEIVER_H
 #define UPDATERECEIVER_H
 #include <iostream>
-#include <QObject>
-#include <QGraphicsPolygonItem>
+#include <QtCore/QObject>
+#include <QtWidgets/QGraphicsPolygonItem>
 #include "box2dengine.h"
-#include <QGraphicsView>
+#include <QtWidgets/QGraphicsView>
 #include <math.h>
 
 class UpdateReceiver : public QObject {
@@ -24,12 +24,7 @@ public slots:
     b2Vec2 lv = _ship_body->GetLinearVelocity();
     float v = lv.x * lv.x;
     float dragForce = 0.5f * v * Cd;
-    // we need the angle of the body's current velocity to know which
-    // angle we should set the drag force
     float dragAngle = atan2f(lv.y, lv.x) + M_PI/2.f;
-    // create a vector based on our dragForce and dragAngle.  it
-    // points in the opposity direction of the ship's linear velocity
-    // and is scaled by the
     b2Vec2 appliedDrag(-sinf(dragAngle)*dragForce, 0.);
     _ship_body->ApplyForceToCenter(appliedDrag, true);
   }

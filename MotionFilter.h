@@ -2,14 +2,14 @@
 #define MOTIONFILTER_H
 #include <iostream>
 
-#include <QGraphicsPolygonItem>
-#include <QGraphicsSceneMouseEvent>
+#include <QtWidgets/QGraphicsPolygonItem>
+#include <QtWidgets/QGraphicsSceneMouseEvent>
 
-#include <QObject>
-#include <QEvent>
-#include <QGraphicsView>
-#include <QKeyEvent>
-#include <QScrollBar>
+#include <QtCore/QObject>
+#include <QtCore/QEvent>
+#include <QtWidgets/QGraphicsView>
+#include <QtGui/QKeyEvent>
+#include <QtWidgets/QScrollBar>
 #include <set>
 #include "box2dengine.h"
 

@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
 
     QtBox2DEngine engine;
     engine.setGravity(0);
-
+    engine.setInterval(60);
 
     b2Body* stalagtites_body = engine.createBody(b2_staticBody, 0, 0, 0, false);
     {
@@ -140,14 +140,12 @@ int main(int argc, char** argv) {
     scene->installEventFilter(scene_motion_filter);
     view.installEventFilter(motion_filter);
 
-    engine.setGravity(0);
-    engine.start();
-
-    engine.setInterval(60);
     UpdateReceiver update_receiver(&view,  pi, ship_body);
     QObject::connect(&engine, SIGNAL(step()), &update_receiver, SLOT(update()));
     MyContactListener myContactListenerInstance;
     engine.setContactListener(&myContactListenerInstance);
+
+    engine.start();
 
     view.show();
     return app.exec();
